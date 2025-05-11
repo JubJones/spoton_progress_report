@@ -31,7 +31,7 @@
 
 %% -----------------------------------
 % Edit the variables for the paper here!
-\def \srsTitle{SpotOn}
+\def \srsTitle{SpotOn} % <-- MODIFIED TITLE
 \def \srsAuthorOne{Krittin Setdhavanich}
 \def \srsAuthorTwo{Yanatchara Jeraja}
 \def \srsAuthorThree{}
@@ -39,57 +39,64 @@
 
 \def \srsAdvisorName{Asst. Prof. Dr. Supaporn Erjongmanee}
 \def \srsCoAdvisorName{Dr. Chaiwat Klampol}
-\def \srsHoDName{Assoc. Prof. Dr. Punpiti Piamsa-nga}
+\def \srsHoDName{Assoc. Prof. Dr. Punpiti Piamsa-nga} % This variable might be used in innercover.tex
 %% -----------------------------------
 
 \begin{document}
 
-    \addtocontents{toc}{\moderate\noindent\textbf{Content}\hfill\textbf{Page}\par\addvspace{.2in}\normalsize}
-    \addtocontents{lot}{~\hfill\textbf{Page}\par\addvspace{.2in}\normalsize}
-    \addtocontents{lof}{~\hfill\textbf{Page}\par\addvspace{.2in}\normalsize}
+    % \addtocontents{toc}{\moderate\noindent\textbf{Content}\hfill\textbf{Page}\par\addvspace{.2in}\normalsize}
+    % \addtocontents{lot}{~\hfill\textbf{Page}\par\addvspace{.2in}\normalsize}
+    % \addtocontents{lof}{~\hfill\textbf{Page}\par\addvspace{.2in}\normalsize}
 
     \include{partials/cover}
-    \include{partials/innercover}
+    \include{partials/innercover} % Ensure this file is modified to remove HoD signature
 
     \pagenumbering{roman}
     \setlength{\parindent}{40pt}
 
-    \include{body/abstract}
-    \include{body/acknowledgement}
+    % SRS Specific Content - Commented out for Progress Report
+    % \include{body/abstract}
+    % \include{body/acknowledgement}
 
-    \tableofcontents
+    % TOC, LOF, LOT - Commented out for Progress Report (typically short)
+    % \tableofcontents
 
-    \newpage
-    \listoftables
-    \label{chap:lot}
-    \addcontentsline{toc}{chapter}{\nameref{chap:lot}}
+    % \newpage
+    % \listoftables
+    % \label{chap:lot}
+    % \addcontentsline{toc}{chapter}{\nameref{chap:lot}}
 
-    \newpage
-    \listoffigures
-    \label{chap:lof}
-    \addcontentsline{toc}{chapter}{\nameref{chap:lof}}
+    % \newpage
+    % \listoffigures
+    % \label{chap:lof}
+    % \addcontentsline{toc}{chapter}{\nameref{chap:lof}}
 
     \clearpage
     \pagenumbering{arabic}
-    \include{body/introduction}
-    \include{body/relatedworks}
-    \include{body/requirementanalysis}
-    \include{body/softwarearchitecture}
-    \include{body/aicomponentdesign}
-    \include{body/softwaredevelopment}
-    \include{body/deliverable}
-    \include{body/conclusion}
     
-    % Reference section
-    \clearpage
-    \phantomsection
-    \addcontentsline{toc}{chapter}{Reference}
-    \include{body/reference}
+    % Main content for the Progress Report
+    \include{body/progress_report_content}
+
+    % SRS Specific Chapters - Commented out for Progress Report
+    % \include{body/introduction}
+    % \include{body/relatedworks}
+    % \include{body/requirementanalysis}
+    % \include{body/softwarearchitecture}
+    % \include{body/aicomponentdesign}
+    % \include{body/softwaredevelopment}
+    % \include{body/deliverable}
+    % \include{body/conclusion}
     
-    % Appendix section
-    \clearpage
-    \phantomsection
-    \addcontentsline{toc}{chapter}{Appendix}
-    \include{body/appendix}
+    % Reference section - Commented out for Progress Report (unless specifically needed)
+    % \clearpage
+    % \phantomsection
+    % \addcontentsline{toc}{chapter}{Reference}
+    % \include{body/reference}
+    
+    % Appendix section - Commented out for Progress Report (unless specifically needed)
+    % \clearpage
+    % \phantomsection
+    % \addcontentsline{toc}{chapter}{Appendix}
+    % \include{body/appendix}
 
 \end{document}
