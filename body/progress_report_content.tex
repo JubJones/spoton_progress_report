@@ -8,6 +8,9 @@ This semester's development for the SpotOn project has focused on two primary st
 
 Concurrently, the backend system architecture has been designed to support retrospective video analysis. This includes defining API endpoints with FastAPI, WebSocket communication protocols for real-time metadata streaming, and a data processing pipeline that integrates AI components for detection, tracking, re-identification, and spatial mapping. The design emphasizes modularity using service layers and design patterns like Strategy and Repository to ensure scalability and maintainability for future development.
 
+In parallel, frontend development has successfully established WebSocket-based communication to receive processed data streams from the backend. This enables the user interface to dynamically display tracking information and analytical results, providing users with a real-time visual representation of the SpotOn system's capabilities.
+
+
 \section*{Detailed Development Description}
 \label{sec:progress_detailed_development}
 
@@ -116,25 +119,45 @@ The backend system has been designed to orchestrate the AI processing pipeline a
     \item \textbf{Communication Protocols:} RESTful APIs (HTTP/S) for control and data retrieval, WebSockets for real-time tracking metadata streaming.
     \item \textbf{Data Flow:} A detailed data flow for retrospective analysis of pre-split sub-videos from S3 has been defined, covering initiation, sub-video fetching/caching, frame-by-frame AI processing, data storage, and real-time metadata updates to the client.
 \end{itemize}
-(No specific backend screenshots were available in the provided design document beyond the client/server logs previously mentioned. If specific backend interface or operational screenshots exist, they can be added here.)
+
 
 \subsection*{Frontend Progress}
 \label{subsec:progress_frontend}
-(To be filled in later as per user request)
+Key UI components have been successfully implemented to provide users with a comprehensive view of the surveillance analytics. This includes:
+\begin{itemize}
+    \item \textbf{Multi-Camera Feed Display:} A module for displaying video streams or image sequences from selected cameras, often annotated with AI-driven insights like bounding boxes.
+    \item \textbf{Interactive Map Visualization:} A component that renders a 2D map of the monitored environment, dynamically updated with the trajectories and current locations of tracked individuals.
+    \item \textbf{Controls and Navigation:}  Standard UI elements for user interaction, such as selecting cameras, time ranges for analysis, and focusing on specific tracked entities.
+\end{itemize}
+The design philosophy has focused on intuitive data presentation, aiming to reduce cognitive load on the operator and enable quick assimilation of critical information.
+Real-time Data Integration and Display:
+A crucial achievement this semester has been the successful integration of the frontend with the backend system via WebSockets. The frontend is now capable of:
+\begin{itemize}
+    \item \textbf{Establishing and Maintaining WebSocket Connections:} Connecting to the backend WebSocket server to receive continuous data streams.
+    \item \textbf{Receiving Processed Analytical Data:} Consuming structured data payloads from the backend, which include person detections (with bounding boxes), global person IDs, tracking updates (status, re-identifications), and map coordinates.
+    \item \textbf{Dynamic UI Rendering:} Utilizing the received data to dynamically update all relevant UI components in real-time. This means that as the backend processes video feeds, the frontend reflects these changes immediately—bounding boxes appear on camera views, trajectories extend on the map, and statistics in the detail panels are updated.
+\end{itemize}
+This successful implementation ensures that users can observe the output of the AI-powered tracking and analysis pipeline as it happens, providing immediate visual feedback and enabling effective monitoring and retrospective analysis through the developed interface. The data is retrieved and displayed finely, laying a solid foundation for further feature enhancements and user experience refinements.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{assets/progress/ui_display.png}
+    \caption{User interface for Multi-Camera Monitoring with AI-Driven Annotations.}
+    \label{fig:ui_display}
+\end{figure}
 
 \subsection*{Updated Development Plan (Gantt Chart)}
 \label{subsec:progress_updated_plan}
-(An updated Gantt chart reflecting the current progress and revised timelines should be inserted here.)
+
 \begin{figure}[!htb]
     \centering
-    % \includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{updated_gantt_chart.png}
-    \caption{Placeholder for Updated Development Plan (Gantt Chart)}
+    \includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{assets/progress/gantt_chart.png}
+    \caption{Updated Development Plan (Gantt Chart)}
     \label{fig:progress_gantt_chart_placeholder}
 \end{figure}
 \clearpage
 
 \section*{Self-Evaluation}
 \label{sec:progress_self_evaluation}
-(1 paragraph reflecting on your current status, delays or accelerations, whether your AI and software components are still viable, and if any major adjustments are needed. Replace this text with your content.)
+The SpotOn project is currently in a strong developmental phase, with significant advancements across the MLOps pipeline, backend architecture, and frontend implementation. Progress has been steady, particularly in establishing the core functionalities for each component, such as model experimentation in MLOps, service-oriented design in the backend, and real-time data visualization in the frontend. The AI components, including fine-tuned detection models like Faster R-CNN, and the overall software architecture remain viable and well-aligned with the project's goals for multi-camera person tracking. While no major delays have been encountered, continuous integration and testing between the increasingly complex backend and frontend will be crucial moving forward. At this stage, no major strategic adjustments appear necessary, though ongoing refinement of inter-component communication protocols and performance optimization will be key focus areas.
 
 % --- End of Progress Report Content ---
