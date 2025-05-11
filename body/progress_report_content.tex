@@ -1,72 +1,137 @@
-% This file contains the main content for the End-of-Semester Progress Report.
-% It should be 2-4 pages long.
 
 \chapter*{End-of-Semester Progress Report} % Using chapter* for unnumbered main title
 \label{chap:progress_report}
-% \addcontentsline{toc}{chapter}{End-of-Semester Progress Report} % Add to ToC if ToC is enabled in document.tex
 
 \section*{Brief Summary}
 \label{sec:progress_summary}
-(1–2 paragraphs summarizing the core feature(s) you’ve developed. Replace this text with your content.)
+This semester's development for the SpotOn project has focused on two primary streams: establishing a robust MLOps pipeline and designing a modular backend system. Significant progress has been made in the MLOps domain, including comprehensive experimentation with person detection models using MLflow, implementation of model training and explainability techniques, and initial design for model deployment as a service. Key AI models like Faster R-CNN were fine-tuned and evaluated on the MTMMC dataset.
+
+Concurrently, the backend system architecture has been designed to support retrospective video analysis. This includes defining API endpoints with FastAPI, WebSocket communication protocols for real-time metadata streaming, and a data processing pipeline that integrates AI components for detection, tracking, re-identification, and spatial mapping. The design emphasizes modularity using service layers and design patterns like Strategy and Repository to ensure scalability and maintainability for future development.
 
 \section*{Detailed Development Description}
 \label{sec:progress_detailed_development}
 
-\subsection*{Key Classes or Modules Developed}
-\label{subsec:progress_modules}
-(Describe the key software components. Replace this text with your content. You can use itemize or enumerate environments.)
-% \begin{itemize}
-%     \item Module 1: Description...
-%     \item Module 2: Description...
-% \end{itemize}
+\subsection*{MLOps Progress}
+\label{subsec:progress_mlops}
+The MLOps efforts have concentrated on building a repeatable and traceable workflow for developing and evaluating the AI components of SpotOn.
 
-\subsection*{Screenshots}
-\label{subsec:progress_screenshots}
-(Include relevant screenshots. Replace this comment with your figures. Ensure image files are in the `assets` path or update \graphicspath.)
-% Example:
-% \begin{figure}[!htb]
-%     \centering
-%     % \includegraphics[width=0.8\textwidth]{your_screenshot_image.png} % Ensure image is in assets/
-%     \caption{Caption for your screenshot.}
-%     \label{fig:progress_screenshot_1}
-% \end{figure}
-% \clearpage % If needed for layout
+\subsubsection*{Key MLOps Developments and Designs:}
+\begin{itemize}
+    \item \textbf{ML Canvas Design:} A comprehensive ML Canvas was formulated to guide the AI system's development. It details the core problem of multi-camera tracking, input data requirements (primarily the MTMMC dataset from S3), the proposed processing approach (utilizing models like Faster R-CNN for detection, BotSort for tracking, and CLIP for Re-ID features), expected outputs (such as annotated video metadata for the UI, map visualizations, and historical data for TimescaleDB), and the criteria for evaluating success.
+    \item \textbf{Model Training Implementation:} An end-to-end training pipeline for the Faster R-CNN person detection model was implemented using PyTorch and TorchVision. This pipeline encompasses initial data exploration of the MTMMC dataset, robust preprocessing steps (including image resizing, color conversion, normalization, and data augmentation techniques like random horizontal flipping), definition of the model architecture (ResNet-50 backbone with FPN), and modification of the classification head specifically for person detection. The training loop integrates MLflow for systematic experiment tracking and management. Furthermore, unit tests were developed to ensure the reliability of dataset loading mechanisms, metric calculation functions, and various utility components.
+    \item \textbf{Model Fairness Analysis:} A conceptual framework for analyzing and mitigating potential biases within the AI models was established. This involved identifying potential sources of bias in the MTMMC training data (such as demographic imbalances or environmental variations) and outlining strategies for fairness metric calculation (e.g., comparing Re-Identification accuracy disparities across different proxy groups defined by observable characteristics like lighting conditions or occlusion levels). Mitigation approaches, including data-based techniques (targeted augmentation, re-sampling), model-based methods (adversarial debiasing, fairness regularization), and post-processing adjustments, were also considered.
+    \item \textbf{Model Versioning and Comparative Experimentation:} MLflow was employed as a central tool for versioning AI models and conducting systematic comparative experiments. Several person detection architectures, including Faster R-CNN, RT-DETR variants, and YOLO, were evaluated. Key parameters (model name, type, weights path) and performance metrics (mAP, FPS, total person detections) were meticulously logged for each experimental run. This data-driven approach led to the selection of Faster R-CNN as the baseline person detection model, primarily due to its strong performance on medium-sized objects, higher overall recall, and observed qualitative stability.
+    \item \textbf{Model Explainability Techniques:} To enhance transparency and trustworthiness, Grad-CAM (Gradient-weighted Class Activation Mapping) was implemented using the Captum library. This technique generates visual heatmaps that highlight the specific image regions most influential in the Faster R-CNN model's decision-making process for person detection, offering insights into its internal workings.
+    \item \textbf{Prediction Reasoning Mechanism:} Building upon the visual explanations, a mechanism was developed to generate human-understandable textual justifications for individual model predictions. This system combines the quantitative confidence score of a detection with qualitative insights from the Grad-CAM analysis, providing users with a clearer understanding of why a particular prediction was made.
+    \item \textbf{Model Deployment as a Service Design:} The architectural design for deploying the trained AI models as a service was completed. This involves a backend API layer built with FastAPI, featuring documented RESTful endpoints for initiating and monitoring video processing tasks, and WebSocket endpoints for streaming real-time tracking metadata (bounding boxes, global IDs, map coordinates) to client applications. The functionality of this service-based deployment was validated using a Python-based test client simulating frontend interactions.
+\end{itemize}
 
-\subsection*{Experimental Results (e.g., AI models)}
-\label{subsec:progress_experimental_results}
-(Present any experimental results, especially for AI models. Use tables or figures as needed. Replace this text with your content.)
-% Example Table:
-% \begin{table}[!htb]
-%     \centering
-%     \caption{Example Experimental Results}
-%     \label{tab:progress_results}
-%     \begin{tabular}{@{}lcc@{}}
-%         \toprule
-%         Model/Experiment & Metric 1 & Metric 2 \\ \midrule
-%         Experiment A     & Value A  & Value B  \\
-%         Experiment B     & Value C  & Value D  \\ \bottomrule
-%     \end{tabular}
-% \end{table}
+\subsubsection*{Illustrative Figures from MLOps Work (Placeholders)}
+\begin{figure}[!htb]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{path_to_your_ml_canvas_figure.png}
+    \caption{Overview of the ML Canvas for SpotOn}
+    \label{fig:progress_ml_canvas}
+\end{figure}
 
-\subsection*{Datasets Acquired or Used}
-\label{subsec:progress_datasets}
-(Describe datasets acquired or used. Replace this text with your content.)
-% \begin{itemize}
-%     \item Dataset 1: Description, source, how it was used...
-%     \item Dataset 2: Description, source, how it was used...
-% \end{itemize}
+\begin{figure}[!htb]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{path_to_your_mlflow_training_metrics.png}
+    \caption{Sample MLflow Metrics from Faster R-CNN Training Runs}
+    \label{fig:progress_mlflow_training_metrics}
+\end{figure}
+
+\begin{figure}[!htb]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{path_to_your_mlflow_model_comparison.png}
+    \caption{MLflow Interface Showing Detection Model Comparison}
+    \label{fig:progress_mlflow_model_comparison}
+\end{figure}
+
+\begin{figure}[!htb]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{path_to_your_gradcam_example.png}
+    \caption{Example of Grad-CAM Visualization for Person Detection}
+    \label{fig:progress_gradcam_example}
+\end{figure}
+
+\begin{figure}[!htb]
+    \centering
+    % \includegraphics[width=0.9\textwidth]{path_to_your_api_log_example.png}
+    \caption{Logs Demonstrating API and WebSocket Communication for Deployed AI Service}
+    \label{fig:progress_api_logs}
+\end{figure}
+\clearpage
+
+\subsubsection*{Experimental Results Summary (MLOps)}
+\begin{itemize}
+    \item \textbf{Faster R-CNN Initial Training:} An initial fine-tuning run on a 10\% subset of the MTMMC dataset for 5 epochs demonstrated the model's learning capability, achieving an overall mAP of 0.6522 and an mAP@0.50 of 0.8954. The proximity of training and validation losses suggested no significant overfitting during this preliminary phase.
+    \item \textbf{Detection Model Comparison:}
+        \begin{table}[!htb]
+          \centering
+          \caption{Key Performance Metrics from Detection Model Comparison}
+          \label{tab:progress_model_comparison_summary}
+          \begin{tabular}{@{}lcc@{}}
+            % \toprule
+            % Model Name & eval\_ap\_person & processing\_fps \\ \midrule
+            % rtdetr\_x & 0.322 & 16.09 \\
+            % fasterrcnn\_resnet50 & 0.320 & 10.42 \\
+            % rtdetr\_l & 0.316 & 9.48 \\
+            % yolo11x & 0.297 & 11.66 \\ \bottomrule
+          \end{tabular}%
+        \end{table}
+    
+        Faster R-CNN (fasterrcnn\_resnet50) was selected as the baseline detection model. While RTDETR-X showed marginally higher overall mAP and speed, Faster R-CNN demonstrated superior performance on medium-sized objects, a significantly higher count of total person detections (indicating better recall), and greater qualitative stability with fewer observed Non-Maximal Suppression (NMS) issues in initial tests.
+\end{itemize}
+
+\subsubsection*{Datasets Acquired or Used (MLOps)}
+The \textbf{MTMMC (Multi-Target Multi-Camera) dataset} has been the primary data source for training, validating, and testing the AI models. This dataset, collected from real-world campus and factory environments using 16 multi-modal cameras, provides diverse and challenging scenarios crucial for developing a robust multi-camera tracking system.
+
+\subsection*{Backend System Design Progress}
+\label{subsec:progress_backend}
+The backend system has been designed to orchestrate the AI processing pipeline and serve data to the frontend. The design emphasizes a modular, service-oriented architecture.
+
+\subsubsection*{Key Backend Modules and Components Designed (as per Spoton Backend Design.md):}
+\begin{itemize}
+    \item \textbf{Application Structure (`app/`):}
+        \begin{itemize}
+            \item `api/`: Defines FastAPI routers for versioned API endpoints (e.g., `/api/v1/processing\_tasks`, `/api/v1/analytics\_data`) and WebSocket management (`websockets.py`). Pydantic models in `schemas.py` ensure data validation.
+            \item `core/`: Handles application configuration (`config.py` using Pydantic `BaseSettings`) and lifecycle events (`event\_handlers.py` for model loading/unloading).
+            \item `models/`: Contains wrappers for AI models (Detector, Tracker, FeatureExtractor) implementing the Strategy Pattern (e.g., `FasterRCNNDetector`, `BotSortTracker` wrapping BoxMOT).
+            \item `services/`: Encapsulates business logic. Key services include:
+                \begin{itemize}
+                    \item `PipelineOrchestratorService`: Manages the core processing pipeline.
+                    \item `ReIDService`: Handles Re-ID logic and gallery management.
+                    \item `StorageService`: Implements Repository/DAO pattern for S3, Redis, TimescaleDB.
+                    \item `HomographyService`: Manages coordinate transformations.
+                    \item `NotificationService`: Pushes updates via WebSockets.
+                \end{itemize}
+            \item `tasks/`: Contains logic for background processing, such as `FrameProcessorTask` for per-frame AI operations.
+            \item `utils/`: Common utility functions.
+            \item `main.py`: FastAPI application entry point.
+            \item `dependencies.py`: FastAPI dependency injection setup.
+        \end{itemize}
+    \item \textbf{Core Technologies:} Python, FastAPI, PyTorch, OpenCV, BoxMOT, Redis, TimescaleDB, Docker.
+    \item \textbf{Design Patterns:} Strategy, Factory, Service Layer, Repository/DAO, Observer (conceptual via WebSockets), Pipeline (conceptual), Dependency Injection.
+    \item \textbf{Communication Protocols:} RESTful APIs (HTTP/S) for control and data retrieval, WebSockets for real-time tracking metadata streaming.
+    \item \textbf{Data Flow:} A detailed data flow for retrospective analysis of pre-split sub-videos from S3 has been defined, covering initiation, sub-video fetching/caching, frame-by-frame AI processing, data storage, and real-time metadata updates to the client.
+\end{itemize}
+(No specific backend screenshots were available in the provided design document beyond the client/server logs previously mentioned. If specific backend interface or operational screenshots exist, they can be added here.)
+
+\subsection*{Frontend Progress}
+\label{subsec:progress_frontend}
+(To be filled in later as per user request)
 
 \subsection*{Updated Development Plan (Gantt Chart)}
 \label{subsec:progress_updated_plan}
-(Include an updated Gantt chart. Replace this comment with your figure.)
-% Example:
-% \begin{figure}[!htb]
-%     \centering
-%     % \includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{updated_gantt_chart.png} % Ensure image is in assets/
-%     \caption{Updated Development Plan (Gantt Chart)}
-%     \label{fig:progress_gantt_chart}
-% \end{figure}
-% \clearpage % If needed for layout
+(An updated Gantt chart reflecting the current progress and revised timelines should be inserted here.)
+\begin{figure}[!htb]
+    \centering
+    % \includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{updated_gantt_chart.png}
+    \caption{Placeholder for Updated Development Plan (Gantt Chart)}
+    \label{fig:progress_gantt_chart_placeholder}
+\end{figure}
+\clearpage
 
 \section*{Self-Evaluation}
 \label{sec:progress_self_evaluation}
