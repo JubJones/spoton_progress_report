@@ -105,9 +105,70 @@ The MLOps efforts have concentrated on building a repeatable and traceable workf
 \subsubsection*{Datasets Acquired or Used (MLOps)}
 The \textbf{MTMMC (Multi-Target Multi-Camera) dataset} has been the primary data source for training, validating, and testing the AI models. This dataset, collected from real-world campus and factory environments using 16 multi-modal cameras, provides diverse and challenging scenarios crucial for developing a robust multi-camera tracking system.
 
+\subsection*{Exploratory Data Analysis (EDA) of the MTMMC Dataset}
+\label{subsec:progress_eda}
+A comprehensive Exploratory Data Analysis (EDA) was conducted on the MTMMC dataset to understand its characteristics, structure, and data quality. This analysis is pivotal for informing data preprocessing strategies, model selection, and evaluation methodologies.
+
+
+\subsubsection*{EDA Process Overview}
+An automated EDA pipeline was developed and executed. This pipeline performed several key steps:
+\begin{enumerate}
+    \item \textbf{Data Discovery:} Scanned the dataset to identify available scenes, cameras, image sequences, and ground truth files based on a predefined configuration.
+    \item \textbf{Annotation Loading:} Parsed all relevant ground truth files to consolidate annotations.
+    \item \textbf{Statistical Calculation:} Computed a wide range of descriptive statistics regarding object counts, bounding box characteristics, and track lengths.
+    \item \textbf{Quality Assessment:} Performed checks for data integrity, such as frame count mismatches between image files and annotations, out-of-bounds bounding boxes, and consistency in image dimensions.
+    \item \textbf{Visualization Generation:} Created plots to visualize key distributions and the effects of standard preprocessing steps.
+\end{enumerate}
+All derived metrics, parameters, and generated artifacts from the EDA process were systematically logged for traceability and review.
+
+\subsubsection*{Key EDA Findings and Observations}
+The EDA, conducted on a representative subset of the MTMMC dataset (including factory scene `s10` and campus scene `s47` with multiple cameras like `c01-c16`), yielded quantitative metrics and qualitative insights into the data's nature.
+
+\begin{itemize}
+    \item \textbf{Overall Dataset Scale Parameters:} The analyzed portion comprised multiple scenes and cameras, revealing tens of thousands of frame indices, hundreds of thousands of annotations, and over one hundred unique person identities. These high-level parameters are summarized in Figure \ref{fig:progress_eda_parameters_summary}.
+
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[width=0.8\textwidth]{assets/progress/eda_parameters.png}
+        \caption{Summary of Key Dataset Parameters from EDA}
+        \label{fig:progress_eda_parameters_summary}
+    \end{figure}
+    
+    From Figure \ref{fig:progress_eda_parameters_summary}, key parameters like the total number of scenes, cameras, frame indices discovered, total annotations, and unique object IDs are presented, providing a scope of the analyzed data.
+
+    \item \textbf{Annotation Characteristics and Distributions:} Statistical analysis of annotations provided insights into object properties. This included distributions of bounding box heights (min $\approx$30, mean $\approx$190, max $>$1600 pixels), widths, and areas. The number of annotations per frame typically ranged from 1 to 28 (median $\approx$6). Track lengths for individuals also showed significant variation (min $\approx$7, median $\approx$400, max $>$7000 frames). These detailed statistical metrics are captured in Figure \ref{fig:progress_eda_metrics_summary}.
+    \clearpage
+    \begin{figure}[!htb]
+        \centering
+        % Placeholder for an image
+        \includegraphics[width=0.8\textwidth]{assets/progress/eda_metrics.png}
+        \caption{Summary of Detailed Statistical Metrics from EDA}
+        \label{fig:progress_eda_metrics_summary}
+    \end{figure}
+    Figure \ref{fig:progress_eda_metrics_summary} displays a collection of statistical metrics derived from the dataset, such as the minimum, maximum, mean, and median values for bounding box dimensions (height, width, area), track lengths, and annotations per frame.
+    \clearpage
+    \item \textbf{Data Quality Insights:}
+        \begin{itemize}
+            \item \textit{Frame Count Mismatches:} Discrepancies were noted between the number of image files and the extent of ground truth frame indices (e.g., one sequence had 7362 images but GT up to frame 7171).
+            \item \textit{Out-of-Bounds Annotations:} A substantial number of bounding boxes extended beyond image dimensions, indicating objects partially out of view or potential annotation inaccuracies.
+            \item \textit{Image Dimension Consistency:} Sampled images within individual camera streams generally showed consistent dimensions (e.g., 1920x1080).
+        \end{itemize}
+
+\subsubsection*{Significance of EDA}
+The EDA provided critical insights into the MTMMC dataset's scale, content distribution, and quality. This understanding is essential for robust data preprocessing (e.g., handling out-of-bounds boxes, normalizing varied object sizes), appropriate model selection, and designing effective training and evaluation strategies tailored to the dataset's specific challenges.
+
+\clearpage
 \subsection*{Backend System Design Progress}
 \label{subsec:progress_backend}
-The backend system has been designed to orchestrate the AI processing pipeline and serve data to the frontend. The design emphasizes a modular, service-oriented architecture.
+The backend system has been designed to orchestrate the AI processing pipeline and serve data to the frontend. The design emphasizes a modular, service-oriented architecture. To provide context for the backend's role and its technological environment within the broader SpotOn project, the overall system architecture is first presented.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{assets/progress/system_architecture.jpg}
+    \caption{Project Architecture Overview}
+    \label{fig:system_architecture}
+\end{figure}
+Figure \ref{fig:system_architecture} presents a high-level overview of the project's complete system architecture, outlining the principal technology stacks and interconnected components. This includes the Frontend (React, Zustand), Backend services (FastAPI, PyTorch, OpenCV, Ultralytics, BoxMOT), MLOps pipeline (MLflow, DagsHub), data sources (Amazon S3), data storage and caching mechanisms (Redis, TimescaleDB, PostgreSQL), deployment and infrastructure (Docker, Kubernetes, Nginx), and monitoring tools (Prometheus, Grafana). The backend, a central part of this architecture, is detailed further below, focusing on its internal modules and workflow.
 
 \subsubsection*{Key Backend Modules and Components Designed (as per Spoton Backend Design.md):}
 \begin{itemize}
@@ -129,12 +190,20 @@ The backend system has been designed to orchestrate the AI processing pipeline a
             \item `main.py`: FastAPI application entry point.
             \item `dependencies.py`: FastAPI dependency injection setup.
         \end{itemize}
-    \item \textbf{Core Technologies:} Python, FastAPI, PyTorch, OpenCV, BoxMOT, Redis, TimescaleDB, Docker.
-    \item \textbf{Design Patterns:} Strategy, Factory, Service Layer, Repository/DAO, Observer (conceptual via WebSockets), Pipeline (conceptual), Dependency Injection.
-    \item \textbf{Data Flow:} A detailed data flow for retrospective analysis of pre-split sub-videos from S3 has been defined, covering initiation, sub-video fetching/caching, frame-by-frame AI processing, data storage, and real-time metadata updates to the client.
+    \item \textbf{Core Technologies:} The backend specifically leverages Python, FastAPI, PyTorch, OpenCV, BoxMOT, Redis, TimescaleDB, and Docker for its operations.
+    \item \textbf{Design Patterns:} Key design patterns employed include Strategy, Factory, Service Layer, Repository/DAO, Observer (conceptually via WebSockets), Pipeline (conceptual), and Dependency Injection.
+    \item \textbf{Data Flow:} A detailed data flow for retrospective analysis of pre-split sub-videos from S3 has been defined. This covers task initiation, sub-video fetching and caching, frame-by-frame AI processing (detection, tracking, Re-ID), data storage in TimescaleDB, and real-time metadata updates to the client via WebSockets. The internal workflow orchestrating this data processing is visualized next.
 \end{itemize}
 
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{assets/progress/backend_workflow.png}
+    \caption{Backend workflow illustrating key internal components and interactions.}
+    \label{fig:backend_workflow}
+\end{figure}
+Figure \ref{fig:backend_workflow} illustrates this internal backend data flow and the interaction of key services, such as the pipeline orchestrator and notification service. It also shows how these services interface with data stores like S3 and TimescaleDB, and manage client communication via REST APIs and WebSockets.
 
+\clearpage 
 \subsection*{Frontend Progress}
 \label{subsec:progress_frontend}
 Key UI components have been successfully implemented to provide users with a comprehensive view of the surveillance analytics. This includes:
@@ -158,7 +227,9 @@ This successful implementation ensures that users can observe the output of the 
     \caption{User interface for Multi-Camera Monitoring with AI-Driven Annotations.}
     \label{fig:ui_display}
 \end{figure}
+Figure \ref{fig:ui_display} showcases the implemented user interface, demonstrating the display of multi-camera video feeds annotated with AI-generated bounding boxes and an interactive map view for tracking individuals across the monitored environment.
 
+\clearpage
 \subsection*{Updated Development Plan (Gantt Chart)}
 \label{subsec:progress_updated_plan}
 
@@ -168,7 +239,6 @@ This successful implementation ensures that users can observe the output of the 
     \caption{Updated Development Plan (Gantt Chart)}
     \label{fig:progress_gantt_chart_placeholder}
 \end{figure}
-\clearpage
 
 \section*{Self-Evaluation}
 \label{sec:progress_self_evaluation}
